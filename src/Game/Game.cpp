@@ -1,7 +1,6 @@
 #include "Game.hpp"
 
 #include "raylib.h"
-#include <cstdio>
 
 namespace Globals {
     void LoadResource() {
