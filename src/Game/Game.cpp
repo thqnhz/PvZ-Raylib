@@ -1,5 +1,8 @@
 #include "Game.hpp"
 
+#include <ranges>
+#include <utility>
+
 #include "raylib.h"
 
 namespace Globals {
@@ -15,6 +18,8 @@ Game::Game() {
     InitWindow(Globals::WINDOW_WIDTH, Globals::WINDOW_HEIGHT, "Plants vs. Zombies");
     SetTargetFPS(60);
     Globals::LoadResource();
+
+    m_gameplay = new Gameplay();
 }
 
 Game::~Game() {
@@ -42,6 +47,8 @@ void Game::update(float dt) {
             DrawTextEx(Globals::FONT, text, Vector2{Globals::WINDOW_WIDTH / 2.0f - textBoundingBox.x / 2.0f, Globals::WINDOW_HEIGHT / 2.0f - textBoundingBox.y / 2.0f}, 72, Globals::FONT_SPACING, BLACK);
 
             DrawFPS(10, 10);
+
+            m_gameplay->update(dt);
             break;
         }
         default: {
@@ -53,4 +60,47 @@ void Game::update(float dt) {
 
 void Game::setGameState(GameState gs) {
     *m_gameState = gs;
+}
+
+
+Gameplay::Gameplay() {
+    const float seedRectSize = 64;
+    for (auto [i, plant] : std::views::enumerate(m_seedPack)) {
+        Rectangle rect = {
+            .x = 0,
+            .y = i * seedRectSize + 50,
+            .width = seedRectSize,
+            .height = seedRectSize
+        };
+        m_seedPackWithRectMap.insert(std::pair<Plant, Rectangle>(plant, rect));
+    }
+}
+
+Gameplay::~Gameplay() {}
+
+void Gameplay::update(float dt) {
+    m_totalTime += dt;
+    render();
+}
+
+void Gameplay::render() {
+    for (const auto [plant, rect] : m_seedPackWithRectMap) {
+        switch (plant) {
+        case Plant::Sunflower:
+            DrawRectangleRec(rect, YELLOW);
+            break;
+        case Plant::Peashooter:
+            DrawRectangleRec(rect, GREEN);
+            break;
+        case Plant::Cherrybomb:
+            DrawRectangleRec(rect, RED);
+            break;
+        case Plant::Wallnut:
+            DrawRectangleRec(rect, BROWN);
+            break;
+        default:
+            DrawRectangleRec(rect, PURPLE);
+            break;
+        }
+    }
 }
