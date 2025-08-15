@@ -80,6 +80,13 @@ Gameplay::~Gameplay() {}
 
 void Gameplay::update(float dt) {
     m_totalTime += dt;
+    Vector2 mouseLoc = GetMousePosition();
+    for (const auto [plant, rect] : m_seedPackWithRectMap) {
+        if (CheckCollisionPointRec(mouseLoc, rect)) {
+            if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
+                m_selectedSeed = plant;
+        }
+    }
     render();
 }
 
@@ -102,5 +109,7 @@ void Gameplay::render() {
             DrawRectangleRec(rect, PURPLE);
             break;
         }
+        if (plant == m_selectedSeed)
+            DrawRectangleLinesEx(rect, 4, BLACK);
     }
 }

@@ -52,7 +52,7 @@ class Gameplay {
     float m_totalTime = 0.0f;
     Plant m_seedPack[10] = { Plant::Sunflower, Plant::Peashooter, Plant::Wallnut, Plant::Cherrybomb };
     std::map<Plant, Rectangle> m_seedPackWithRectMap = {};
-    Plant *m_selectedSeed;
+    Plant m_selectedSeed;
 public:
     Gameplay();
     ~Gameplay();
