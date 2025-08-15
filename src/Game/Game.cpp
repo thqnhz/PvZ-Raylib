@@ -64,15 +64,27 @@ void Game::setGameState(GameState gs) {
 
 
 Gameplay::Gameplay() {
-    const float seedRectSize = 64;
+    // Draw seed pack
     for (auto [i, plant] : std::views::enumerate(m_seedPack)) {
         Rectangle rect = {
             .x = 0,
-            .y = i * seedRectSize + 50,
-            .width = seedRectSize,
-            .height = seedRectSize
+            .y = i * s_seedRectSize + 50,
+            .width = s_seedRectSize,
+            .height = s_seedRectSize
         };
         m_seedPackWithRectMap.insert(std::pair<Plant, Rectangle>(plant, rect));
+    }
+    // Draw garden
+    for (auto i = 0; i < s_gardenRows; i++) {
+        for (auto j = 0; j < s_gardenCols; j++) {
+            Rectangle rect = {
+                .x = GetScreenWidth() - i*(s_gardenPlotWidth + 5) - 100,
+                .y = GetScreenHeight() - j*(s_gardenPlotHeight + 5) - 50,
+                .width = -s_gardenPlotWidth,
+                .height = -s_gardenPlotHeight,
+            };
+            m_garden[i][j] = std::pair<Plant, Rectangle>(Plant::None, rect);
+        }
     }
 }
 
@@ -111,5 +123,11 @@ void Gameplay::render() {
         }
         if (plant == m_selectedSeed)
             DrawRectangleLinesEx(rect, 4, BLACK);
+    }
+    for (auto i = 0; i < s_gardenRows; i++) {
+        for (auto j = 0; j < s_gardenCols; j++) {
+            std::pair<Plant, Rectangle> p = m_garden[i][j];
+            DrawRectangleLinesEx(p.second, 0.1f, {0, 82, 172, 50});
+        }
     }
 }
