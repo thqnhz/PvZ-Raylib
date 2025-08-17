@@ -105,6 +105,8 @@ void Gameplay::update(float dt) {
 void Gameplay::render() {
     for (const auto [plant, rect] : m_seedPackWithRectMap) {
         switch (plant) {
+        case Plant::None:
+            break;
         case Plant::Sunflower:
             DrawRectangleRec(rect, YELLOW);
             break;
@@ -121,13 +123,13 @@ void Gameplay::render() {
             DrawRectangleRec(rect, PURPLE);
             break;
         }
-        if (plant == m_selectedSeed)
+        if (plant == m_selectedSeed && m_selectedSeed != Plant::None)
             DrawRectangleLinesEx(rect, 4, BLACK);
     }
     for (auto i = 0; i < s_gardenRows; i++) {
         for (auto j = 0; j < s_gardenCols; j++) {
             std::pair<Plant, Rectangle> p = m_garden[i][j];
-            DrawRectangleLinesEx(p.second, 0.1f, {0, 82, 172, 50});
+            DrawRectangleRec(p.second, {0, 82, 172, 50});
         }
     }
 }

@@ -50,9 +50,9 @@ enum class Plant {
 class Gameplay {
     static const int s_gardenRows = 10;
     static const int s_gardenCols = 5;
-    constexpr static const float s_gardenPlotWidth = 100;
-    const float s_gardenPlotHeight = (float)GetScreenHeight() / s_gardenCols - 30;
-    constexpr static const float s_seedRectSize = 64;
+    static constexpr float s_gardenPlotWidth = 100;
+    static constexpr float s_gardenPlotHeight = (float)Globals::WINDOW_HEIGHT / s_gardenCols - 30;
+    static constexpr float s_seedRectSize = 64;
     std::pair<Plant, Rectangle> m_garden[s_gardenRows][s_gardenCols];
     int m_sun = 50;
     float m_totalTime = 0.0f;
