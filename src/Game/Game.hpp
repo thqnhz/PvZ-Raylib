@@ -64,4 +64,5 @@ public:
     ~Gameplay();
     void update(float dt);
     void render();
+    void drawPlantRect(const Plant &plant, const Rectangle &rect);
 };

@@ -1,5 +1,6 @@
 #include "Game.hpp"
 
+#include <memory>
 #include <ranges>
 #include <utility>
 
@@ -75,13 +76,16 @@ Gameplay::Gameplay() {
         m_seedPackWithRectMap.insert(std::pair<Plant, Rectangle>(plant, rect));
     }
     // Draw garden
+    const int spacing = 5;
+    const int xOffset = 100;
+    const int yOffset = 50;
     for (auto i = 0; i < s_gardenRows; i++) {
         for (auto j = 0; j < s_gardenCols; j++) {
             Rectangle rect = {
-                .x = GetScreenWidth() - i*(s_gardenPlotWidth + 5) - 100,
-                .y = GetScreenHeight() - j*(s_gardenPlotHeight + 5) - 50,
-                .width = -s_gardenPlotWidth,
-                .height = -s_gardenPlotHeight,
+                .x = GetScreenWidth() - i*(s_gardenPlotWidth + spacing) - xOffset - s_gardenPlotWidth,
+                .y = GetScreenHeight() - j*(s_gardenPlotHeight + spacing) - yOffset - s_gardenPlotHeight,
+                .width = s_gardenPlotWidth,
+                .height = s_gardenPlotHeight,
             };
             m_garden[i][j] = std::pair<Plant, Rectangle>(Plant::None, rect);
         }
@@ -104,32 +108,41 @@ void Gameplay::update(float dt) {
 
 void Gameplay::render() {
     for (const auto [plant, rect] : m_seedPackWithRectMap) {
-        switch (plant) {
-        case Plant::None:
-            break;
-        case Plant::Sunflower:
-            DrawRectangleRec(rect, YELLOW);
-            break;
-        case Plant::Peashooter:
-            DrawRectangleRec(rect, GREEN);
-            break;
-        case Plant::Cherrybomb:
-            DrawRectangleRec(rect, RED);
-            break;
-        case Plant::Wallnut:
-            DrawRectangleRec(rect, BROWN);
-            break;
-        default:
-            DrawRectangleRec(rect, PURPLE);
-            break;
-        }
+        drawPlantRect(plant, rect);
         if (plant == m_selectedSeed && m_selectedSeed != Plant::None)
             DrawRectangleLinesEx(rect, 4, BLACK);
     }
     for (auto i = 0; i < s_gardenRows; i++) {
         for (auto j = 0; j < s_gardenCols; j++) {
             std::pair<Plant, Rectangle> p = m_garden[i][j];
-            DrawRectangleRec(p.second, {0, 82, 172, 50});
+            if (CheckCollisionPointRec(GetMousePosition(), p.second))
+                DrawRectangleRec(p.second, DARKGRAY);
+            else
+                drawPlantRect(p.first, p.second);
+            DrawRectangleLinesEx(p.second, 1.0f, LIGHTGRAY);
         }
     }
+}
+
+void Gameplay::drawPlantRect(const Plant &plant, const Rectangle &rect) {
+    Color color;
+    switch (plant) {
+    case Plant::Sunflower:
+        color = YELLOW;
+        break;
+    case Plant::Peashooter:
+        color = GREEN;
+        break;
+    case Plant::Cherrybomb:
+        color = RED;
+        break;
+    case Plant::Wallnut:
+        color = BROWN;
+        break;
+    default:
+        color = PURPLE;
+        break;
+    }
+    if (!ColorIsEqual(color, PURPLE))
+        DrawRectangleRec(rect, color);
 }
