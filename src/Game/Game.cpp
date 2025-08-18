@@ -114,12 +114,16 @@ void Gameplay::render() {
     }
     for (auto i = 0; i < s_gardenRows; i++) {
         for (auto j = 0; j < s_gardenCols; j++) {
-            std::pair<Plant, Rectangle> p = m_garden[i][j];
-            if (CheckCollisionPointRec(GetMousePosition(), p.second))
-                DrawRectangleRec(p.second, DARKGRAY);
+            std::pair<Plant, Rectangle> *p = &m_garden[i][j];
+            if (CheckCollisionPointRec(GetMousePosition(), p->second)) {
+                if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && m_selectedSeed != Plant::None) {
+                    p->first = m_selectedSeed;
+                }
+                DrawRectangleRec(p->second, DARKGRAY);
+            }
             else
-                drawPlantRect(p.first, p.second);
-            DrawRectangleLinesEx(p.second, 1.0f, LIGHTGRAY);
+                drawPlantRect(p->first, p->second);
+            DrawRectangleLinesEx(p->second, 1.0f, LIGHTGRAY);
         }
     }
 }
