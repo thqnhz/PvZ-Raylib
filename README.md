@@ -18,7 +18,7 @@ You can use GitHub Actions to download the binary files on your favorite desktop
 1. Clone the repo
 
     ```bash
-    $ git clone --recurse-submodules https://github.com/thqnhz/PvZ-Raylib
+    $ git clone --recursive https://github.com/thqnhz/PvZ-Raylib
     $ cd PvZ-Raylib
     ```
 
