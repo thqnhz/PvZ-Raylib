@@ -8,10 +8,13 @@
 
 namespace Globals {
     void LoadResource() {
-        FONT = LoadFontEx(TextFormat("%s/asset/font/creepster.ttf", GetWorkingDirectory()), 128, 0, 0);
+        FONT = LoadFontEx(TextFormat("%s/asset/font/creepster.ttf", APP_DIR), 128, 0, 0);
+        Image img = LoadImage(TextFormat("%s/asset/misc/sun.png", APP_DIR));
+        SUN_TEXTURE = LoadTextureFromImage(img);
     }
     void UnloadResource() {
         UnloadFont(FONT);
+        UnloadTexture(SUN_TEXTURE);
     }
 }
 
@@ -47,7 +50,7 @@ void Game::update(float dt) {
             Vector2 textBoundingBox = MeasureTextEx(Globals::FONT, text, 72, Globals::FONT_SPACING);
             DrawTextEx(Globals::FONT, text, Vector2{Globals::WINDOW_WIDTH / 2.0f - textBoundingBox.x / 2.0f, Globals::WINDOW_HEIGHT / 2.0f - textBoundingBox.y / 2.0f}, 72, Globals::FONT_SPACING, BLACK);
 
-            DrawFPS(Globals::WINDOW_HEIGHT - 10, Globals::WINDOW_WIDTH - 10);
+            DrawFPS(100, 10);
 
             m_gameplay->update(dt);
             break;
@@ -129,9 +132,10 @@ void Gameplay::render() {
         }
     }
     // Draw Sun
-    DrawRectangleGradientEx(m_sunRect, YELLOW, ORANGE, RED, ORANGE);
+    const float sunOffset = (50 - m_sunTx->width) / 2.0f;
+    DrawTexture(*m_sunTx, sunOffset, sunOffset, WHITE);
     int sunXPadding = 5;
-    DrawTextEx(Globals::FONT, TextFormat("%d", m_sun), { .x = m_sunRect.x + m_sunRect.width + sunXPadding, .y = m_sunRect.y }, m_sunRect.width, Globals::FONT_SPACING, BLACK);
+    DrawTextEx(Globals::FONT, TextFormat("%d", m_sun), { .x = sunOffset + m_sunTx->width + sunXPadding, .y = sunOffset }, m_sunTx->width, Globals::FONT_SPACING, BLACK);
 }
 
 void Gameplay::drawPlantRect(const Plant &plant, const Rectangle &rect) {

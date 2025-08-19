@@ -8,6 +8,7 @@ class Gameplay;
 
 namespace Globals {
     inline Font FONT;
+    inline Texture SUN_TEXTURE;
     inline static const int WINDOW_WIDTH = 1280;
     inline static const int WINDOW_HEIGHT = 720;
     inline static const int FONT_SPACING = 1;
@@ -55,12 +56,7 @@ class Gameplay {
     static constexpr float s_seedRectSize = 64;
     std::pair<Plant, Rectangle> m_garden[s_gardenRows][s_gardenCols];
     int m_sun = 50;
-    const Rectangle m_sunRect = Rectangle{
-        .x = (50 - 36) / 2.0f,
-        .y = (50 - 36) / 2.0f,
-        .width = 36,
-        .height = 36
-    };
+    const Texture *m_sunTx = &Globals::SUN_TEXTURE;
     float m_totalTime = 0.0f;
     Plant m_seedPack[10] = { Plant::Sunflower, Plant::Peashooter, Plant::Wallnut, Plant::Cherrybomb };
     std::map<Plant, Rectangle> m_seedPackWithRectMap = {};
