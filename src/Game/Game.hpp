@@ -55,6 +55,12 @@ class Gameplay {
     static constexpr float s_seedRectSize = 64;
     std::pair<Plant, Rectangle> m_garden[s_gardenRows][s_gardenCols];
     int m_sun = 50;
+    const Rectangle m_sunRect = Rectangle{
+        .x = (50 - 36) / 2.0f,
+        .y = (50 - 36) / 2.0f,
+        .width = 36,
+        .height = 36
+    };
     float m_totalTime = 0.0f;
     Plant m_seedPack[10] = { Plant::Sunflower, Plant::Peashooter, Plant::Wallnut, Plant::Cherrybomb };
     std::map<Plant, Rectangle> m_seedPackWithRectMap = {};

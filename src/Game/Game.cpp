@@ -47,7 +47,7 @@ void Game::update(float dt) {
             Vector2 textBoundingBox = MeasureTextEx(Globals::FONT, text, 72, Globals::FONT_SPACING);
             DrawTextEx(Globals::FONT, text, Vector2{Globals::WINDOW_WIDTH / 2.0f - textBoundingBox.x / 2.0f, Globals::WINDOW_HEIGHT / 2.0f - textBoundingBox.y / 2.0f}, 72, Globals::FONT_SPACING, BLACK);
 
-            DrawFPS(10, 10);
+            DrawFPS(Globals::WINDOW_HEIGHT - 10, Globals::WINDOW_WIDTH - 10);
 
             m_gameplay->update(dt);
             break;
@@ -65,7 +65,7 @@ void Game::setGameState(GameState gs) {
 
 
 Gameplay::Gameplay() {
-    // Draw seed pack
+    // Init seed pack
     for (auto [i, plant] : std::views::enumerate(m_seedPack)) {
         Rectangle rect = {
             .x = 0,
@@ -75,7 +75,7 @@ Gameplay::Gameplay() {
         };
         m_seedPackWithRectMap.insert(std::pair<Plant, Rectangle>(plant, rect));
     }
-    // Draw garden
+    // Init garden
     const int spacing = 5;
     const int xOffset = 100;
     const int yOffset = 50;
@@ -107,11 +107,13 @@ void Gameplay::update(float dt) {
 }
 
 void Gameplay::render() {
+    // Draw seed pack
     for (const auto [plant, rect] : m_seedPackWithRectMap) {
         drawPlantRect(plant, rect);
         if (plant == m_selectedSeed && m_selectedSeed != Plant::None)
             DrawRectangleLinesEx(rect, 4, BLACK);
     }
+    // Draw Garden
     for (auto i = 0; i < s_gardenRows; i++) {
         for (auto j = 0; j < s_gardenCols; j++) {
             std::pair<Plant, Rectangle> *p = &m_garden[i][j];
@@ -126,6 +128,10 @@ void Gameplay::render() {
             DrawRectangleLinesEx(p->second, 1.0f, LIGHTGRAY);
         }
     }
+    // Draw Sun
+    DrawRectangleGradientEx(m_sunRect, YELLOW, ORANGE, RED, ORANGE);
+    int sunXPadding = 5;
+    DrawTextEx(Globals::FONT, TextFormat("%d", m_sun), { .x = m_sunRect.x + m_sunRect.width + sunXPadding, .y = m_sunRect.y }, m_sunRect.width, Globals::FONT_SPACING, BLACK);
 }
 
 void Gameplay::drawPlantRect(const Plant &plant, const Rectangle &rect) {
