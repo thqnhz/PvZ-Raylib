@@ -99,6 +99,21 @@ Gameplay::~Gameplay() {}
 
 void Gameplay::update(float dt) {
     m_totalTime += dt;
+    // Spawn falling sun
+    m_timeSinceLastSunSpawn += dt;
+    if (m_timeSinceLastSunSpawn >= GetRandomValue(3, 5)) {
+        TraceLog(LOG_INFO, "Spawned a sun");
+        m_timeSinceLastSunSpawn = 0.0f;
+        spawnFallingSun();
+    }
+    // Update falling suns
+    if (!m_fallingSun.empty()) {
+        for (auto &fs : m_fallingSun) {
+            fs.y += dt*100;
+            if (fs.y >= GetScreenHeight() - m_sunTx->height)
+                fs.y = GetScreenHeight() - m_sunTx->height;
+        }
+    }
     Vector2 mouseLoc = GetMousePosition();
     for (const auto [plant, rect] : m_seedPackWithRectMap) {
         if (CheckCollisionPointRec(mouseLoc, rect)) {
@@ -136,6 +151,9 @@ void Gameplay::render() {
     DrawTexture(*m_sunTx, sunOffset, sunOffset, WHITE);
     int sunXPadding = 5;
     DrawTextEx(Globals::FONT, TextFormat("%d", m_sun), { .x = sunOffset + m_sunTx->width + sunXPadding, .y = sunOffset }, m_sunTx->width, Globals::FONT_SPACING, BLACK);
+    // Draw falling sun
+    for (auto const &fs : m_fallingSun)
+        DrawTexture(*m_sunTx, fs.x, fs.y, WHITE);
 }
 
 void Gameplay::drawPlantRect(const Plant &plant, const Rectangle &rect) {
@@ -159,4 +177,14 @@ void Gameplay::drawPlantRect(const Plant &plant, const Rectangle &rect) {
     }
     if (!ColorIsEqual(color, PURPLE))
         DrawRectangleRec(rect, color);
+}
+
+void Gameplay::spawnFallingSun() {
+    int offset = 100;
+    Vector2 spawnLocation = {
+        .x = (float)GetRandomValue(offset, GetScreenWidth() - offset) ,
+        .y = -(float)Globals::SUN_TEXTURE.height
+    };
+    DrawTexture(*m_sunTx, spawnLocation.x, spawnLocation.y, WHITE);
+    m_fallingSun.emplace_back(spawnLocation);
 }

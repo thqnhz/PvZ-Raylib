@@ -3,6 +3,7 @@
 #include "raylib.h"
 #include <map>
 #include <memory>
+#include <vector>
 
 class Gameplay;
 
@@ -60,6 +61,9 @@ class Gameplay {
     float m_totalTime = 0.0f;
     Plant m_seedPack[10] = { Plant::Sunflower, Plant::Peashooter, Plant::Wallnut, Plant::Cherrybomb };
     std::map<Plant, Rectangle> m_seedPackWithRectMap = {};
+    float m_timeSinceLastSunSpawn = 0.0f;
+
+    std::vector<Vector2> m_fallingSun = {};
     Plant m_selectedSeed;
 public:
     Gameplay();
@@ -67,4 +71,5 @@ public:
     void update(float dt);
     void render();
     void drawPlantRect(const Plant &plant, const Rectangle &rect);
+    void spawnFallingSun();
 };
