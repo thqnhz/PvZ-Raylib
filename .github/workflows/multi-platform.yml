@@ -33,6 +33,34 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
+    - name: Cache CMake build
+      uses: actions/cache@v4
+      with:
+        path: build
+        key: ${{ runner.os }}-cmake-${{ env.BUILD_TYPE }}-${{ hashFiles('CMakeLists.txt', '**/CMakeLists.txt', '**/*.cmake') }}
+        restore-keys: |
+          ${{ runner.os }}-cmake-${{ env.BUILD_TYPE }}-
+
+    - name: Cache APT packages
+      if: runner.os == 'Linux'
+      uses: actions/cache@v4
+      with:
+        path: /var/cache/apt/archives
+        key: ${{ runner.os }}-apt-${{ hashFiles('.github/workflows/**') }}
+        restore-keys: |
+          ${{ runner.os }}-apt-
+
+    - name: Cache Homebrew
+      if: runner.os == 'macOS'
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/Library/Caches/Homebrew
+          /usr/local/Homebrew
+        key: ${{ runner.os }}-brew-${{ hashFiles('.github/workflows/**') }}
+        restore-keys: |
+          ${{ runner.os }}-brew-
+
     - name: Download latest GCC since MacOS still not having C++23 support
       if: runner.os == 'macOS'
       run: |
