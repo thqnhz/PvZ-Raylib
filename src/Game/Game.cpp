@@ -108,9 +108,17 @@ void Gameplay::update() {
     // Update falling suns
     if (!m_fallingSun.empty()) {
         for (auto &fs : m_fallingSun) {
-            fs.y += GetFrameTime() * 100;
-            if (fs.y >= GetScreenHeight() - m_sunTx->height)
-                fs.y = GetScreenHeight() - m_sunTx->height;
+            fs.first.y += GetFrameTime() * 100;
+            if (fs.first.y >= GetScreenHeight() - m_sunTx->height)
+                fs.first.y = GetScreenHeight() - m_sunTx->height;
+        }
+        for (auto i = 0; i < m_fallingSun.size(); i++) {
+            m_fallingSun[i].first.y += GetFrameTime() * 50;
+            m_fallingSun[i].second -= int(GetFrameTime() * 100);
+            if (m_fallingSun[i].second <= 0) {
+                m_fallingSun.erase(m_fallingSun.begin() + i);
+            }
+            TraceLog(LOG_INFO, "Sun %d - life time %d", i, m_fallingSun[i].second);
         }
     }
     Vector2 mouseLoc = GetMousePosition();
@@ -152,7 +160,7 @@ void Gameplay::render() {
     DrawTextEx(Globals::FONT, TextFormat("%d", m_sun), { .x = sunOffset + m_sunTx->width + sunXPadding, .y = sunOffset }, m_sunTx->width, Globals::FONT_SPACING, BLACK);
     // Draw falling sun
     for (auto const &fs : m_fallingSun)
-        DrawTexture(*m_sunTx, fs.x, fs.y, WHITE);
+        DrawTexture(*m_sunTx, fs.first.x, fs.first.y, WHITE);
 }
 
 void Gameplay::drawPlantRect(const Plant &plant, const Rectangle &rect) {
@@ -185,5 +193,7 @@ void Gameplay::spawnFallingSun() {
         .y = -(float)Globals::SUN_TEXTURE.height
     };
     DrawTexture(*m_sunTx, spawnLocation.x, spawnLocation.y, WHITE);
-    m_fallingSun.emplace_back(spawnLocation);
+    m_fallingSun.emplace_back(
+        std::make_pair(spawnLocation, GetRandomValue(5000, 7000))
+    );
 }

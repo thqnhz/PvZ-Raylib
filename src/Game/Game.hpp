@@ -63,7 +63,7 @@ class Gameplay {
     std::map<Plant, Rectangle> m_seedPackWithRectMap = {};
     float m_timeSinceLastSunSpawn = 0.0f;
 
-    std::vector<Vector2> m_fallingSun = {};
+    std::vector<std::pair<Vector2, int>> m_fallingSun = {};
     Plant m_selectedSeed;
 public:
     Gameplay();
