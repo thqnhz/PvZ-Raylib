@@ -35,7 +35,7 @@ public:
     Game();
     ~Game();
     void run();
-    void update(float dt);
+    void update();
     void setGameState(GameState gs);
 };
 
@@ -68,7 +68,7 @@ class Gameplay {
 public:
     Gameplay();
     ~Gameplay();
-    void update(float dt);
+    void update();
     void render();
     void drawPlantRect(const Plant &plant, const Rectangle &rect);
     void spawnFallingSun();

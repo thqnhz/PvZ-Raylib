@@ -34,13 +34,12 @@ Game::~Game() {
 void Game::run() {
     while (m_isRunning && !WindowShouldClose()) {
         BeginDrawing();
-        float dt = GetFrameTime();
-        update(dt);
+        update();
         EndDrawing();
     }
 }
 
-void Game::update(float dt) {
+void Game::update() {
     switch (*m_gameState) {
         case GameState::GAMEPLAY: {
             ClearBackground(RAYWHITE);
@@ -52,7 +51,7 @@ void Game::update(float dt) {
 
             DrawFPS(100, 10);
 
-            m_gameplay->update(dt);
+            m_gameplay->update();
             break;
         }
         default: {
@@ -97,10 +96,10 @@ Gameplay::Gameplay() {
 
 Gameplay::~Gameplay() {}
 
-void Gameplay::update(float dt) {
-    m_totalTime += dt;
+void Gameplay::update() {
+    m_totalTime += GetFrameTime();
     // Spawn falling sun
-    m_timeSinceLastSunSpawn += dt;
+    m_timeSinceLastSunSpawn += GetFrameTime();
     if (m_timeSinceLastSunSpawn >= GetRandomValue(3, 5)) {
         TraceLog(LOG_INFO, "Spawned a sun");
         m_timeSinceLastSunSpawn = 0.0f;
@@ -109,7 +108,7 @@ void Gameplay::update(float dt) {
     // Update falling suns
     if (!m_fallingSun.empty()) {
         for (auto &fs : m_fallingSun) {
-            fs.y += dt*100;
+            fs.y += GetFrameTime() * 100;
             if (fs.y >= GetScreenHeight() - m_sunTx->height)
                 fs.y = GetScreenHeight() - m_sunTx->height;
         }
